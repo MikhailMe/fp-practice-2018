@@ -37,9 +37,7 @@ replaceVar varName replacement expression =
 -- если оно состоит только из констант
 evaluate :: Term -> Term
 evaluate expression = case expression of
-	BinaryTerm operartion lhs rhs -> do
-		let left  = evaluate lhs
-		let right = evaluate rhs
+	BinaryTerm operartion lhs rhs ->
 		case (operartion, left, right) of 
 			(Plus, IntConstant left, IntConstant right) -> IntConstant (left + right)
 			(Minus, IntConstant left, IntConstant right) -> IntConstant (left - right)
@@ -51,5 +49,8 @@ evaluate expression = case expression of
 			(Minus, left, IntConstant 0) -> left
 			(Times, left, IntConstant 0) -> IntConstant 0
 			(Times, left, IntConstant 1) -> left
-			_ -> BinaryTerm operartion left right
+			_ -> BinaryTerm operartion left right 
+		where
+			left  = evaluate lhs
+			right = evaluate rhs
 	_ -> expression

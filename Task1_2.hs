@@ -6,18 +6,16 @@ import Prelude hiding (sin, cos, gcd)
 
 -- синус числа (формула Тейлора)
 sin :: Double -> Double
-sin x = do
-	let newX = mod' x (2 * pi) :: Double
-	let n = newX :: Double
-	let s = 0.0 :: Double
-	let i = 1 :: Int
-	calculateSin n newX s i
+sin x = calculateSin n newX s i where 
+	newX = mod' x (2 * pi) :: Double
+	n = newX :: Double
+	s = 0.0 :: Double
+	i = 1 :: Int
 
 calculateSin :: Double -> Double -> Double -> Int -> Double
-calculateSin n x s i = do
-	let eps = 1e-8 :: Double
-	if (abs n < eps) then s else
-		calculateSin (n * (generalNum x / denomForSin i)) x (s + n) (i + 1)
+calculateSin n x s i = if (abs n < eps) then s 
+	else calculateSin (n * (generalNum x / denomForSin i)) x (s + n) (i + 1)
+	where eps = 1e-8 :: Double
 
 generalNum :: Double -> Double
 generalNum x = (-1.0) * x * x
@@ -27,18 +25,16 @@ denomForSin i = ((2 * (fromIntegral i)) * (2 * (fromIntegral i) + 1))
 
 -- косинус числа (формула Тейлора)
 cos :: Double -> Double
-cos x = do
-	let newX = mod' x (2 * pi) :: Double
-	let n = 1.0 :: Double
-	let s = 0.0 :: Double
-	let i = 1 :: Int
-	calculateCos n newX s i
+cos x = calculateCos n newX s i where
+	newX = mod' x (2 * pi) :: Double
+	n = 1.0 :: Double
+	s = 0.0 :: Double
+	i = 1 :: Int
 
 calculateCos :: Double -> Double -> Double -> Int -> Double
-calculateCos n x s i = do
-	let eps = 1e-8 :: Double
-	if (abs n < eps) then s else
-		calculateCos (n * (generalNum x / denomForCos i)) x (s + n) (i + 1)
+calculateCos n x s i = if abs n < eps then s 
+	else calculateCos (n * (generalNum x / denomForCos i)) x (s + n) (i + 1) 
+	where eps = 1e-8 :: Double
 
 denomForCos :: Int -> Double
 denomForCos i = ((2 * (fromIntegral i) - 1) * (2 * (fromIntegral i)))
@@ -67,7 +63,12 @@ isDateCorrect day month year
 	| day < 0 = False
 	| month < 0 = False
 	| year < 0 = False
-	| otherwise = check day month (year `mod` 4 == 0)
+	| otherwise = check day month (isLeapYear year)
+
+isLeapYear :: Integer -> Bool
+isLeapYear year = if year `mod` 4 == 0 
+	then (year `mod` 100 /= 0) || (year `mod` 400 == 0)
+		else False 
 
 check :: Integer -> Integer -> Bool -> Bool
 check day month isLeapYear =
@@ -78,17 +79,17 @@ check day month isLeapYear =
 		otherwise -> False
 
 checkDays :: Integer -> Integer -> Bool
-checkDays days limit = if days < limit then True else False
-
+checkDays days limit = days < limit
 
 -- возведение числа в степень, duh
 -- готовые функции и плавающую арифметику использовать нельзя
 pow :: Integer -> Integer -> Integer
 pow x y 
-	| y < 0     = error "error: degree less zero"
-	| y == 0    = 1
-	| y == 1    = x
-	| otherwise = x * pow x (y - 1)
+	| y < 0  = error "error: degree less zero"
+	| y == 0 = 1
+	| y == 1 = x
+	| even y = pow (x * x) (y `div` 2)
+	| odd y  = x * pow (x * x) ((y - 1) `div` 2)
 
 -- является ли данное число простым?
 isPrime :: Integer -> Bool
