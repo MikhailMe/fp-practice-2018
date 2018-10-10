@@ -4,7 +4,7 @@ import Todo(todo)
 
 -- Ассоциативный массив на основе бинарного дерева поиска
 -- Ключи - Integer, значения - произвольного типа
-data TreeMap v = ChangeMe 
+data TreeMap v = Leaf | Node v (TreeMap v) (TreeMap v) 
 
 -- Пустое дерево
 emptyTree :: TreeMap v
