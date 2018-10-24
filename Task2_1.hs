@@ -4,11 +4,11 @@ import Todo(todo)
 
 -- Ассоциативный массив на основе бинарного дерева поиска
 -- Ключи - Integer, значения - произвольного типа
-data TreeMap v = Leaf | Node v (TreeMap v) (TreeMap v) 
+data TreeMap v = EmptyTree | Node v (TreeMap , TreeMap) 
 
 -- Пустое дерево
 emptyTree :: TreeMap v
-emptyTree = todo
+emptyTree = EmptyTree
 
 -- Содержится ли заданный ключ в дереве?
 contains :: TreeMap v -> Integer -> Bool
