@@ -34,8 +34,8 @@ lookup k (Node key value left right)
 insert :: (Integer, v) -> TreeMap v -> TreeMap v
 insert (k, v) EmptyTree = Node k v EmptyTree EmptyTree
 insert (k, v) (Node key value left right)
-    | k < key = Node key value (insert (k, v) left) right
-    | k > key = Node key value left (insert (k, v) right)
+    | k < key   = Node key value (insert (k, v) left) right
+    | k > key   = Node key value left (insert (k, v) right)
     | otherwise = (Node key value left right)
 
 -- Удаление элемента по ключу
@@ -53,7 +53,7 @@ remove i (Node key value left right)
 helperRemove :: TreeMap v -> TreeMap v -> TreeMap v
 helperRemove left' EmptyTree = left'
 helperRemove left' (Node key value EmptyTree right) = Node key value left' right
-helperRemove left' (Node key value left right) = Node key value (helperRemove left' left) right
+helperRemove left' (Node key value left right)      = Node key value (helperRemove left' left) right
 
 -- Поиск ближайшего снизу ключа относительно заданного
 nearestLE :: Integer -> TreeMap v -> (Integer, v)
@@ -73,7 +73,7 @@ treeFromList lst = foldr insert EmptyTree lst
 -- Построение списка пар из дерева
 listFromTree :: TreeMap v -> [(Integer, v)]
 listFromTree EmptyTree = []
-listFromTree t = inorder t
+listFromTree t         = inorder t
 
 inorder :: TreeMap v -> [(Integer, v)]
 inorder (Node key value left right) = listFromTree left ++ [(key, value)] ++ listFromTree right
@@ -93,5 +93,5 @@ kMean i (Node key value left right)
     | i > (size left)  = kMean (i - size left - 1) right
 
 size :: TreeMap v -> Integer
-size EmptyTree                 = 0
+size EmptyTree             = 0
 size (Node _ _ left right) = size left + 1 + size right
