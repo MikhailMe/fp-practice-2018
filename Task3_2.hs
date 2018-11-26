@@ -30,7 +30,10 @@ instance (Show a) => Show (ReverseList a) where
     show RNil               = "[]"
     show (RCons RNil value) = show value
     show (RCons next value) = show next ++ "," ++ show value
-  
+
+instance Semigroup (ReverseList a) where
+    (<>) = mappend
+
 instance Monoid (ReverseList a) where
     mempty = RNil
 
