@@ -24,7 +24,7 @@ contains (Node key value left right) k
 
 -- Значение для заданного ключа
 lookup :: Integer -> TreeMap v -> v
-lookup k EmptyTree = error "error: tree is empty"
+lookup k EmptyTree = error "error: key not found"
 lookup k (Node key value left right)
     | k == key = value
     | k < key  = lookup k left
@@ -40,15 +40,15 @@ insert (k, v) (Node key value left right)
 
 -- Удаление элемента по ключу
 remove :: Integer -> TreeMap v -> TreeMap v
-remove i EmptyTree = error "error: tree is empty"
+remove i EmptyTree = error "error: key not found"
 remove i (Node key value left right)
     | i < key  = Node key value (remove i left) right
     | i > key  = Node key value left (remove i right)
     | i == key = case (left, right) of
-                     (EmptyTree, EmptyTree) -> EmptyTree
-                     (left, EmptyTree)      -> left
-                     (EmptyTree, right)     -> right
-                     (left, right)          -> helperRemove left right
+                      (EmptyTree, EmptyTree) -> EmptyTree
+                      (left, EmptyTree)      -> left
+                      (EmptyTree, right)     -> right
+                      (left, right)          -> helperRemove left right
 
 helperRemove :: TreeMap v -> TreeMap v -> TreeMap v
 helperRemove left' EmptyTree = left'
@@ -57,14 +57,17 @@ helperRemove left' (Node key value left right)      = Node key value (helperRemo
 
 -- Поиск ближайшего снизу ключа относительно заданного
 nearestLE :: Integer -> TreeMap v -> (Integer, v)
-nearestLE i EmptyTree = error "error: tree is empty"
+nearestLE i EmptyTree = error "error: key not found"
 nearestLE i (Node key value left right)
     | i == key = (key, value)
     | i < key  = nearestLE i left
-    | i > key  = case right of 
-        Node key' value' _ _ | i == key' -> (key', value')
-        Node key' value' _ _ | i < key'  -> (key, value)
-        Node key' value' _ _ | i > key'  -> nearestLE i right
+    | i > key  = case (right) of 
+        Node key' value' left' _ | i == key' -> (key', value')
+                                 | i > key'  -> nearestLE i right
+                                 | i < key'  -> case (left') of 
+                                        EmptyTree -> (key, value)
+                                        otherwise -> nearestLE i left'
+        otherwise -> (key, value) 
 
 -- Построение дерева из списка пар
 treeFromList :: [(Integer, v)] -> TreeMap v
@@ -86,7 +89,7 @@ postorder (Node key value left right) = listFromTree left ++ listFromTree right 
 
 -- Поиск k-той порядковой статистики дерева 
 kMean :: Integer -> TreeMap v -> (Integer, v)
-kMean i EmptyTree = error "error: tree is empty"
+kMean i EmptyTree = error "error: key not found"
 kMean i (Node key value left right)
     | i == (size left) = (key, value)
     | i < (size left)  = kMean i left
