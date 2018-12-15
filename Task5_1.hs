@@ -30,10 +30,32 @@ list2dlist' left (h: t) =
     in rec
 
 index :: DList a -> Int -> a
-index = todo
+index DNil ind                       = error "error: list is empty"
+index (DCons left current right) 0   = current
+index (DCons left current right) ind = index right (ind - 1)
 
 insertAt :: DList a -> Int -> a -> DList a
-insertAt list index value = todo
+-- если лист пустой, то всегда вставляем в нулевой элемент
+insertAt DNil _ value = DCons DNil value DNil
+insertAt (DCons left lvalue right) index value
+    -- дошли до элемента и в следующий надо вставить
+    -- создаем элемент
+    -- прокидываем себя же в правый элемент 
+    | index == 1 = let rec = DCons left lvalue (insertAt' rec value right) in rec
+    -- случай когда вставляем в первый элемент
+    | index == 0 = let rec = DCons DNil value (insertAt' rec lvalue right) in rec
+    -- если вставляем в индекс, который больше длины списка, то ошибка, иначе идём дальше
+    | index /= 1 = case right of 
+        DNil -> error "error: index more than list length"
+        _    -> DCons left lvalue (insertAt right (index - 1) value)
 
+insertAt' :: DList a -> a -> DList a -> DList a
+-- обновляем последний элемент
+insertAt' left value DNil = DCons left value DNil
+-- обновляем все правые элементы, прокидывая "себя" в правый элемент
+insertAt' left value (DCons left' value' right) =
+    let rec = DCons left value (insertAt' rec value' right) in rec
+    
 removeAt :: DList a -> Int -> DList a
+removeAt DNil index = error "error: list is empty"
 removeAt list index = todo
